@@ -32,7 +32,7 @@ public class WhistleFactory: UIViewController {
     view.clipsToBounds = true
     view.addSubview(titleLabel)
 
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "orientationDidChange", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(WhistleFactory.orientationDidChange), name: UIDeviceOrientationDidChangeNotification, object: nil)
   }
 
   public required init?(coder aDecoder: NSCoder) {
@@ -104,20 +104,25 @@ public class WhistleFactory: UIViewController {
   public func present(duration duration: NSTimeInterval) {
     hideTimer.invalidate()
 
-    let initialOrigin = whistleWindow.frame.origin.y
-    whistleWindow.frame.origin.y = initialOrigin - titleLabelHeight
+//    let initialOrigin = whistleWindow.frame.origin.y
+//    whistleWindow.frame.origin.y = initialOrigin - titleLabelHeight
+    whistleWindow.alpha = 0
     whistleWindow.makeKeyAndVisible()
     UIView.animateWithDuration(0.2, animations: {
-      self.whistleWindow.frame.origin.y = initialOrigin
+//      self.whistleWindow.frame.origin.y = initialOrigin
+        self.whistleWindow.alpha = 1
+        
     })
 
-    hideTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "timerDidFire", userInfo: nil, repeats: false)
+    hideTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: #selector(WhistleFactory.timerDidFire), userInfo: nil, repeats: false)
   }
 
   public func hide() {
-    let finalOrigin = view.frame.origin.y - titleLabelHeight
+//    let finalOrigin = view.frame.origin.y - titleLabelHeight
+    whistleWindow.alpha = 1
     UIView.animateWithDuration(0.2, animations: {
-      self.whistleWindow.frame.origin.y = finalOrigin
+//      self.whistleWindow.frame.origin.y = finalOrigin
+        self.whistleWindow.alpha = 0
       }, completion: { _ in
         if let window = UIApplication.sharedApplication().windows.filter({ $0 != self.whistleWindow }).first {
           window.makeKeyAndVisible()
